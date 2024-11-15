@@ -1,0 +1,161 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+#define COL   0
+#define COLL  1
+#define COLR  2
+
+/ {
+        behaviors {
+        tp: tap_mods {
+            compatible = "zmk,behavior-hold-tap";
+            label = "TAP_MODS";
+            #binding-cells = <2>;
+            tapping_term_ms = <200>;
+            flavor = "tap-preferred";
+            bindings = <&kp>, <&kp>;
+                };
+         };
+
+/*                              36 KEY MATRIX / LAYOUT MAPPING
+
+  ╭────────────────────┬────────────────────╮ ╭─────────────────────┬─────────────────────╮
+  │  0   1   2   3   4 │  5   6   7   8   9 │ │ LT4 LT3 LT2 LT1 LT0 │ RT0 RT1 RT2 RT3 RT4 │
+  │ 10  11  12  13  14 │ 15  16  17  18  19 │ │ LM4 LM3 LM2 LM1 LM0 │ RM0 RM1 RM2 RM3 RM4 │
+  │ 20  21  22  23  24 │ 25  26  27  28  29 │ │ LB4 LB3 LB2 LB1 LB0 │ RB0 RB1 RB2 RB3 RB4 │
+  ╰───────╮ 30  31  32 │ 33  34  35 ╭───────╯ ╰───────╮ LH2 LH1 LH0 │ RH0 RH1 RH2 ╭───────╯
+          ╰────────────┴────────────╯                 ╰─────────────┴─────────────╯             */
+
+#define COMBO(NAME, BINDINGS, KEYPOS, LAYERS, MS) \
+  combo_##NAME { \
+    bindings = <BINDINGS>; \
+    key-positions = <KEYPOS>; \
+    layers = <LAYERS>; \
+    timeout-ms = <MS>; \
+  };
+
+#define COMBO_TERM_FAST 14
+#define COMBO_TERM_NORMAL 20
+#define COMBO_TERM_SLOW 45
+
+combos {
+  compatible = "zmk,combos";
+
+  COMBO(q, &kp Q, 2 3, BASE NAV SYM, COMBO_TERM_NORMAL)
+  COMBO(z, &kp Z, 22 23, BASE NAV SYM, COMBO_TERM_NORMAL)
+  COMBO(v, &kp V, 1 2, BASE NAV SYM, COMBO_TERM_NORMAL)
+  COMBO(lshift, &sk LSHIFT, 11 12, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(rshift, &sk RSHIFT, 17 18, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(numpad, &mo NUMPD, 31 32, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_SLOW)
+  COMBO(function, &mo FUN, 33 34, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_SLOW)
+  COMBO(backspace, &kp BSPC, 26 27, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_SLOW)
+  COMBO(del_word, &kp LC(BSPC), 26 28, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_SLOW)
+  COMBO(enter, &kp RET, 28 29, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_NORMAL)
+  COMBO(escape, &kp ESC, 0 1, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_NORMAL)
+  COMBO(dquote, &kp DQT, 7 8, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_NORMAL)
+  COMBO(delete, &kp DEL, 8 9, BASE GAME NAV SYM NUM NUMPD FUN, COMBO_TERM_NORMAL)
+  COMBO(lbkt, &kp LBKT, 1 11, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(lpar, &kp LPAR, 2 12, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(lbrc, &kp LBRC, 3 13, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(labk, &kp LESS_THAN, 4 14, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(rabk, &kp GREATER_THAN, 5 15, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(rbrc, &kp RBRC, 6 16, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(rpar, &kp RPAR, 7 17, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(rbkt, &kp RBKT, 8 18, BASE NAV SYM NUM NUMPD FUN, COMBO_TERM_FAST)
+  COMBO(capslock, &kp CAPS, 1 8, BASE, COMBO_TERM_NORMAL)
+  COMBO(capsword, &caps_word, 2 7, BASE, COMBO_TERM_NORMAL)
+  COMBO(g_g, &kp G, 4 14, GAME, COMBO_TERM_NORMAL)
+  COMBO(g_b, &kp B, 10 20, GAME, COMBO_TERM_NORMAL)
+}; 
+
+
+        keymap {
+                compatible = "zmk,keymap";
+
+                default_layer {
+/* Default
+ * .-----------------------------------------.                    .-----------------------------------------.
+ * | TAB  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | BKSP |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | CTRL |   A  |   S  |   D  |   F  |   G  |                    |   H  |   J  |   K  |   L  |   ;  |   '  |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | SHFT |   Z  |   X  |   C  |   V  |   B  |-------.    .-------|   N  |   M  |   ,  |   .  |   /  | SHFT |
+ * '-----------------------------------------/       /     \      \-----------------------------------------'
+ *                          |  GUI |  LWR | / Space /       \ Space\  |TT(RS)| Tab  |
+ *                          |      |      |/       /         \      \ |      |      |
+ *                          '-------------''------'           '------''-------------'
+ *
+ *   Encoder Left: Up <-> Down
+ *   Encoder Right: Left <-> Right
+ */
+                        bindings = <
+   &kp TAB   &kp Q &kp W &kp E &kp R &kp T   &kp Y &kp U  &kp I     &kp O   &kp P    &kp BSPC
+   &kp LCTRL &kp A &kp S &kp D &kp F &kp G   &kp H &kp J  &kp K     &kp L   &kp SEMI &kp SQT
+   &kp LSHFT &kp Z &kp X &kp C &kp V &kp B   &kp N &kp M  &kp COMMA &kp DOT &kp FSLH &kp RSHFT
+                  &kp LGUI &mo 1 &kp SPACE   &kp RET &mo 2 &kp RALT
+                        >;
+
+                        sensor-bindings = <&inc_dec_kp DOWN UP &inc_dec_kp RIGHT LEFT>;
+                };
+
+                lower_layer {
+/* LOWER
+ * .-----------------------------------------.                    .-----------------------------------------.
+ * |  ESC |   1  |  2   |  3   |  4   |  5   |                    |   6  |   7  |   8  |   9  |   0  | BKSP |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | BTCLR| BT1  | BT2  | BT3  | BT4  | BT5  |                    |  LFT |  DWN |   UP |  RGT |      |      |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | SHFT |      |      |      |      |      |-------.    .-------|      |      |      |      |      |      |
+ * '-----------------------------------------/       /     \      \-----------------------------------------'
+ *                          |  GUI |      | / Space /       \ Enter\  |      |  ALT |
+ *                          |      |      |/       /         \      \ |      |      |
+ *                          '-------------''------'           '------''-------------'
+ * 
+ *   Encoder Left: PG_UP <-> PG_DN
+ *   Encoder Right: -
+ */
+                        bindings = <
+   &kp ESC    &kp N1       &kp N2       &kp N3       &kp N4       &kp N5            &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
+   &bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4      &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
+   &kp LSHFT  &trans       &trans       &trans       &trans       &trans            &trans   &trans   &trans &trans    &trans &trans
+                                        &kp LGUI     &trans       &kp SPACE         &kp RET &trans &kp RALT
+                            >;
+
+                            sensor-bindings = <&inc_dec_kp PG_UP PG_DN &inc_dec_kp PG_UP PG_DN>;
+                };
+
+                raise_layer {
+/* RAISE
+ * .-----------------------------------------.                    .-----------------------------------------.
+ * | ESC  |   !  |   @  |   #  |   $  |   %  |                    |   ^  |   &  |   *  |   (  |   )  | BKSP |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | CTRL |      |      | Prev | Next |      |                    |   -  |   =  |   {  |   }  |  "|" |   `  |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | SHFT |      |      |      |      |      |-------.    .-------|   _  |   +  |   [  |   ]  |   \  |   ~  |
+ * '-----------------------------------------/       /     \      \-----------------------------------------'
+ *                          | Play |      | / Space /       \ Enter\  |      |  ALT |
+ *                          | Paus |      |/       /         \      \ |      |      |
+ *                          '------------''------'            '------''-------------'
+ *
+ *   Encoder Left: -
+ *   Encoder Right: VOL_UP <-> VOL_D
+ */
+                        bindings = <
+    &kp  ESC  &kp EXCL  &kp AT  &kp HASH   &kp DLLR   &kp PRCNT   &kp CARET &kp AMPS  &kp KP_MULTIPLY &kp LPAR &kp RPAR &kp BSPC
+    &kp LCTRL &trans    &trans  &kp C_PREV &kp C_NEXT &trans      &kp MINUS &kp EQUAL &kp LBKT        &kp RBKT &kp PIPE &kp GRAVE
+    &kp LSHFT &trans    &trans  &trans     &trans     &trans      &trans    &trans    &trans          &trans   &kp BSLH &kp TILDE
+                                   &kp LGUI &trans &kp SPACE   &kp RET &trans &kp RALT
+                        >;
+   
+                        sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+                };
+ 
+        };
+};
